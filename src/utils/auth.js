@@ -7,6 +7,8 @@ export function getToken() {
 }
 
 export function setToken(token) {
+  console.log('set token TokenKey is Admin-Token:')
+  console.log(token)
   return Cookies.set(TokenKey, token)
 }
 

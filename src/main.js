@@ -31,6 +31,28 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false
 
+Vue.prototype.handlerRes = function(res) {
+  console.log(res)
+  const data = res.data
+  if (data.success) {
+    this.$notify({
+      title: '成功',
+      message: '操作成功',
+      type: 'success',
+      duration: 2000
+    })
+  } else {
+    console.log(data.data)
+    this.$notify({
+      title: '失败',
+      message: data.error[0].msg,
+      type: 'error',
+      duration: 2000
+    })
+  }
+  return data.success
+}
+
 new Vue({
   el: '#app',
   router,
