@@ -22,3 +22,10 @@ export function deleteSource(data) {
     method: 'delete'
   })
 }
+
+export function publishSource(data) {
+  return request({
+    url: '/moduleSource/' + data + '/publish',
+    method: 'put'
+  })
+}

@@ -72,7 +72,8 @@
       <el-table-column align="center" :label="$t('actions')" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>
-          <el-button type="success" v-if="scope.row.publish == false" size="mini" @click="handlePublish(scope.row)">{{$t('table.publish')}}</el-button>
+          <el-button type="success" v-if="scope.row.publish == false" size="small" @click="handlePublish(scope.row)">{{$t('table.publish')}}</el-button>
+          <el-button type="info" v-if="scope.row.publish == true" size="small " @click="handlePublish(scope.row)">{{$t('table.unPublish')}}</el-button>
           <el-button type="danger"  size="mini" @click="handleDelete(scope.row,'deleted')">{{$t('table.delete')}}</el-button>
         </template>
       </el-table-column>
@@ -131,12 +132,11 @@
   import tabPane from './components/tabPane'
   import complexTable from '@/views/table/complexTable'
   import { fetchPv, updateArticle } from '@/api/article'
-  import { getSource, createSource, deleteSource } from '@/api/monitorsource'
+  import { getSource, createSource, deleteSource, publishSource } from '@/api/monitorsource'
   import { parseTime } from '@/utils'
   import waves from '@/directive/waves'
   import router from '@/router'
-  import { asyncRouterMap } from '@/router'
-
+  // import { asyncRouterMap } from '@/router'
 
   const moduleTypeOptions = [
     { key: 'SBADMIN', display_name: 'SBADMIN' },
@@ -165,7 +165,8 @@
           module: 'SBADMIN',
           ip: '',
           port: 8080,
-          description: ''
+          description: '',
+          publish: false
         },
         tableKey: 0,
         list: null,
@@ -306,30 +307,18 @@
         })
       },
       handlePublish(row) {
-        console.log(this.$store.getters.roles)
-        // console.log(this.$store.getters.permission_routers)
-        // const roles = this.$store.getters.roles
-        // const old = this.$store.getters.addRouters
-        // console.log(old)
-        console.log()
-        console.log()
-        console.log(asyncRouterMap)
-        asyncRouterMap.forEach(function(router, i) {
-          if (router.path === '/monitorsource') {
-            console.log(i)
-            console.log(router)
-            router.children.push({
-              path: 'https://www.baidu.com',
-              name: row.module + '_' + row.ip,
-              meta: { title: row.module + '_' + row.ip, icon: 'tab' }
+        publishSource(row.id).then(res => {
+          if (this.handlerRes(res)) {
+            row.publish = !row.publish
+            this.$store.dispatch('GetUserInfo').then((res) => {
+              const roles = res.data.data.roles
+              const sources = res.data.data.sources
+              this.$store.dispatch('GenerateRoutes', { roles, sources }).then(() => {
+                router.addRoutes(this.$store.getters.addRouters)
+              })
             })
           }
         })
-        console.log(asyncRouterMap)
-        console.log()
-        console.log()
-        const news = this.$store.getters.addRouters
-        console.log(news)
       },
       handleFetchPv(pv) {
         fetchPv(pv).then(response => {

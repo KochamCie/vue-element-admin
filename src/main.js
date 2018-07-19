@@ -18,11 +18,12 @@ import './permission' // permission control
 import './mock' // simulation data
 
 import * as filters from './filters' // global filters
-
+import htmlPanel from './components/Html/HtmlPanel'
 Vue.use(Element, {
   size: 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)
 })
+// Vue.component('html-panel', HtmlPanel)
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
@@ -32,7 +33,7 @@ Object.keys(filters).forEach(key => {
 Vue.config.productionTip = false
 
 Vue.prototype.handlerRes = function(res) {
-  console.log(res)
+  // console.log(res)
   const data = res.data
   if (data.success) {
     this.$notify({
@@ -59,5 +60,5 @@ new Vue({
   store,
   i18n,
   template: '<App/>',
-  components: { App }
+  components: { App, htmlPanel }
 })

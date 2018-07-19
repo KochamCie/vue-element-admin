@@ -22,7 +22,7 @@ const user = {
     },
     SET_TOKEN: (state, token) => {
       state.token = token
-      console.log('3. SET_TOKEN called %s', token)
+      // console.log('3. SET_TOKEN called %s', token)
     },
     SET_INTRODUCTION: (state, introduction) => {
       state.introduction = introduction
@@ -50,14 +50,14 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          console.log('1. get response is ：')
+          // console.log('1. get response is ：')
           const data = response.data.data
           console.log(data)
-          console.log('2. set token')
+          // console.log('2. set token')
           commit('SET_TOKEN', data.token)
           setToken(data.token)
-          console.log('4. setToken called %s', data.token)
-          console.log(resolve)
+          // console.log('4. setToken called %s', data.token)
+          // console.log(resolve)
           resolve()
         }).catch(error => {
           reject(error)
@@ -73,7 +73,7 @@ const user = {
             reject('error')
           }
           const data = response.data.data
-          console.log(data)
+          // console.log(data)
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
@@ -133,7 +133,7 @@ const user = {
         commit('SET_TOKEN', role)
         setToken(role)
         getUserInfo(role).then(response => {
-          const data = response.data
+          const data = response.data.data
           commit('SET_ROLES', data.roles)
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)

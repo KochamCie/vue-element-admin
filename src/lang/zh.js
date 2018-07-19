@@ -116,6 +116,7 @@ export default {
     actions: '操作',
     edit: '编辑',
     publish: '发布',
+    unPublish: '取消发布',
     draft: '草稿',
     delete: '删除',
     cancel: '取 消',

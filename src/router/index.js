@@ -76,21 +76,86 @@ export const asyncRouterMap = [
     component: Layout,
     redirect: '/monitorsource/index',
     alwaysShow: true,
+    name: 'monitorsource',
     meta: {
       title: '监控资源',
       icon: 'tab'
     },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/monitorsource/index'),
-      name: 'sourceManager',
-      meta: { title: '资源配置', icon: 'tab' }
-    }, {
-      path: 'index',
-      component: () => import('@/views/monitorsource/index'),
-      name: 'sourceManager2',
-      meta: { title: '监控资源2', icon: 'tab' }
-    }]
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/monitorsource/index'),
+        name: 'index',
+        meta: { title: '资源配置', icon: 'tab' }
+      },
+      // {
+      //   path: 'htmlViewSample',
+      //   component: () => import('@/views/monitorsource/htmlViewSample'),
+      //   name: 'htmlViewSample',
+      //   meta: { title: 'htmlViewSample', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
+      // }
+      {
+        path: '/monitorsource/htmlViewSample',
+        // component: () => import('@/views/monitorsource/source/index'),
+        name: 'source',
+        meta: { title: 'source' },
+        children: [
+          {
+            path: 'htmlViewSample1',
+            component: () => import('@/views/monitorsource/htmlViewSample'),
+            name: 'htmlViewSample1',
+            meta: { title: 'htmlViewSample1', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
+          },
+          {
+            path: 'htmlViewSample2',
+            component: () => import('@/views/monitorsource/htmlViewSample'),
+            name: 'htmlViewSample2',
+            meta: { title: 'sbadmin2', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
+          }
+        ]
+      }
+      // {
+      //   path: '/nested/bar', // Must write the full path
+      //   component: () => import('@/views/nested/bar/index'), // Parent router-view
+      //   name: 'bar',
+      //   meta: { title: 'bar' },
+      //   children: [
+      //     {
+      //       path: 'profile',
+      //       component: () => import('@/views/nested/bar/profile'),
+      //       name: 'bar-profile',
+      //       meta: { title: 'barProfile' }
+      //     },
+      //     {
+      //       path: 'posts',
+      //       component: () => import('@/views/nested/bar/posts'),
+      //       name: 'bar-posts',
+      //       meta: { title: 'barPosts' }
+      //     }
+      //   ]
+      // },
+      //
+      // {
+      //   path: '/monitorsource/source2',
+      //   // component: () => import('@/views/monitorsource/source/index'),
+      //   name: 'source',
+      //   meta: { title: 'source' },
+      //   children: [
+      //     {
+      //       path: 'sbadmin',
+      //       component: () => import('@/views/monitorsource/source/index'),
+      //       name: 'source-sbadmin',
+      //       meta: { title: 'sbadmin', icon: 'tab' }
+      //     },
+      //     {
+      //       path: 'sbadmin2',
+      //       component: () => import('@/views/monitorsource/source/index'),
+      //       name: 'source-sbadmin2',
+      //       meta: { title: 'sbadmin2', icon: 'tab' }
+      //     }
+      //   ]
+      // }
+    ]
   },
   {
     path: '/permission',
