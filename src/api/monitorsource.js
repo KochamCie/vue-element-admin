@@ -29,3 +29,11 @@ export function publishSource(data) {
     method: 'put'
   })
 }
+
+export function updateSource(id, data) {
+  return request({
+    url: '/moduleSource/' + id,
+    method: 'put',
+    data
+  })
+}

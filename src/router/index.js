@@ -74,7 +74,7 @@ export const asyncRouterMap = [
   {
     path: '/monitorsource',
     component: Layout,
-    redirect: '/monitorsource/index',
+    redirect: '/monitorsource/config',
     alwaysShow: true,
     name: 'monitorsource',
     meta: {
@@ -83,36 +83,10 @@ export const asyncRouterMap = [
     },
     children: [
       {
-        path: 'index',
+        path: 'config',
         component: () => import('@/views/monitorsource/index'),
-        name: 'index',
+        name: 'config',
         meta: { title: '资源配置', icon: 'tab' }
-      },
-      // {
-      //   path: 'htmlViewSample',
-      //   component: () => import('@/views/monitorsource/htmlViewSample'),
-      //   name: 'htmlViewSample',
-      //   meta: { title: 'htmlViewSample', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
-      // }
-      {
-        path: '/monitorsource/htmlViewSample',
-        // component: () => import('@/views/monitorsource/source/index'),
-        name: 'source',
-        meta: { title: 'source' },
-        children: [
-          {
-            path: 'htmlViewSample1',
-            component: () => import('@/views/monitorsource/htmlViewSample'),
-            name: 'htmlViewSample1',
-            meta: { title: 'htmlViewSample1', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
-          },
-          {
-            path: 'htmlViewSample2',
-            component: () => import('@/views/monitorsource/htmlViewSample'),
-            name: 'htmlViewSample2',
-            meta: { title: 'sbadmin2', icon: 'tab', src: 'http://172.16.3.211:8888/lanmao/swagger-ui.html' }
-          }
-        ]
       }
       // {
       //   path: '/nested/bar', // Must write the full path
@@ -157,45 +131,45 @@ export const asyncRouterMap = [
       // }
     ]
   },
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/index',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [{
-      path: 'page',
-      component: () => import('@/views/permission/page'),
-      name: 'pagePermission',
-      meta: {
-        title: 'pagePermission',
-        roles: ['admin'] // or you can only set roles in sub nav
-      }
-    }, {
-      path: 'directive',
-      component: () => import('@/views/permission/directive'),
-      name: 'directivePermission',
-      meta: {
-        title: 'directivePermission'
-        // if do not set roles, means: this page does not require permission
-      }
-    }]
-  },
+  // {
+  //   path: '/permission',
+  //   component: Layout,
+  //   redirect: '/permission/index',
+  //   alwaysShow: true, // will always show the root menu
+  //   meta: {
+  //     title: 'permission',
+  //     icon: 'lock',
+  //     roles: ['admin', 'editor'] // you can set roles in root nav
+  //   },
+  //   children: [{
+  //     path: 'page',
+  //     component: () => import('@/views/permission/page'),
+  //     name: 'pagePermission',
+  //     meta: {
+  //       title: 'pagePermission',
+  //       roles: ['admin'] // or you can only set roles in sub nav
+  //     }
+  //   }, {
+  //     path: 'directive',
+  //     component: () => import('@/views/permission/directive'),
+  //     name: 'directivePermission',
+  //     meta: {
+  //       title: 'directivePermission'
+  //       // if do not set roles, means: this page does not require permission
+  //     }
+  //   }]
+  // },
 
-  {
-    path: '/icon',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/svg-icons/index'),
-      name: 'icons',
-      meta: { title: 'icons', icon: 'icon', noCache: true }
-    }]
-  },
+  // {
+  //   path: '/icon',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/svg-icons/index'),
+  //     name: 'icons',
+  //     meta: { title: 'icons', icon: 'icon', noCache: true }
+  //   }]
+  // },
   //
   // {
   //   path: '/components',
@@ -250,24 +224,24 @@ export const asyncRouterMap = [
   //   }]
   // },
   //
-  // {
-  //   path: '/table',
-  //   component: Layout,
-  //   redirect: '/table/complex-table',
-  //   name: 'table',
-  //   meta: {
-  //     title: 'Table',
-  //     icon: 'table'
-  //   },
-  //   children: [
-  //     { path: 'dynamic-table', component: () => import('@/views/table/dynamicTable/index'), name: 'dynamicTable', meta: { title: 'dynamicTable' }},
-  //     { path: 'drag-table', component: () => import('@/views/table/dragTable'), name: 'dragTable', meta: { title: 'dragTable' }},
-  //     { path: 'inline-edit-table', component: () => import('@/views/table/inlineEditTable'), name: 'inlineEditTable', meta: { title: 'inlineEditTable' }},
-  //     { path: 'tree-table', component: () => import('@/views/table/treeTable/treeTable'), name: 'treeTableDemo', meta: { title: 'treeTable' }},
-  //     { path: 'custom-tree-table', component: () => import('@/views/table/treeTable/customTreeTable'), name: 'customTreeTableDemo', meta: { title: 'customTreeTable' }},
-  //     { path: 'complex-table', component: () => import('@/views/table/complexTable'), name: 'complexTable', meta: { title: 'complexTable' }}
-  //   ]
-  // },
+  {
+    path: '/table',
+    component: Layout,
+    redirect: '/table/complex-table',
+    name: 'table',
+    meta: {
+      title: 'Table',
+      icon: 'table'
+    },
+    children: [
+      { path: 'dynamic-table', component: () => import('@/views/table/dynamicTable/index'), name: 'dynamicTable', meta: { title: 'dynamicTable' }},
+      { path: 'drag-table', component: () => import('@/views/table/dragTable'), name: 'dragTable', meta: { title: 'dragTable' }},
+      { path: 'inline-edit-table', component: () => import('@/views/table/inlineEditTable'), name: 'inlineEditTable', meta: { title: 'inlineEditTable' }},
+      { path: 'tree-table', component: () => import('@/views/table/treeTable/treeTable'), name: 'treeTableDemo', meta: { title: 'treeTable' }},
+      { path: 'custom-tree-table', component: () => import('@/views/table/treeTable/customTreeTable'), name: 'customTreeTableDemo', meta: { title: 'customTreeTable' }},
+      { path: 'complex-table', component: () => import('@/views/table/complexTable'), name: 'complexTable', meta: { title: 'complexTable' }}
+    ]
+  },
   //
   // {
   //   path: '/example',

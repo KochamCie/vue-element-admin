@@ -58,32 +58,36 @@ function generateModule(asyncRouterMap, sources) {
   // 请求资源
   asyncRouterMap.forEach(function(router, i) {
     if (router.path === '/monitorsource') {
-      router.children.splice(2, router.children.length)
+      router.children.splice(1, router.children.length)
       sources.forEach(function(source) {
         // 如果不含有模块，先添加模块
         if (!hasModule(router, source)) {
-          router.children.push({
-            path: source.ip,
+          const newModule = {
+            path: '/monitorsource/' + source.module,
             name: source.module,
+            component: () => import('@/views/monitorsource/console'),
             meta: { title: source.module, icon: 'tab' },
             children: []
-          })
+          }
+          router.children.push(newModule)
         }
         // 添加到对应的模块
         router.children.forEach(function(child, i) {
           if (child.name === source.module) {
-            console.log('push htmlViewSample :?', i)
-            child.children.push({
-              path: 'htmlViewSample' + i,
-              name: source.ip,
-              component: () => import('@/views/monitorsource/htmlViewSample'),
-              meta: { title: '_' + source.ip, icon: 'tab', src: source.url }
-            })
+            const newRouter = {
+              path: source.alias + '_' + i,
+              name: source.alias + '_' + i,
+              component: () => import('@/views/monitorsource/console'),
+              meta: { title: source.alias, icon: 'tab', src: source.url, fontSize: 'font-size: 10px' }
+            }
+            console.log('new Router is :', newRouter)
+            child.children.push(newRouter)
           }
         })
       })
     }
   })
+  return asyncRouterMap
 }
 
 const permission = {
@@ -95,18 +99,20 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+      console.log('state.routers is :', state.routers)
     }
   },
   actions: {
     GenerateRoutes({ commit }, data) {
+      console.log('GenerateRoutes start!!!!!!!!!!!!!!!!!!!!')
       return new Promise(resolve => {
         const { roles, sources } = data
         let accessedRouters
-        generateModule(asyncRouterMap, sources)
+        // asyncRouterMap = generateModule(asyncRouterMap, sources)
         if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMap
+          accessedRouters = generateModule(asyncRouterMap, sources)
         } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = filterAsyncRouter(generateModule(asyncRouterMap, sources), roles)
         }
         commit('SET_ROUTERS', accessedRouters)
         resolve()

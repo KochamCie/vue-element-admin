@@ -12,7 +12,7 @@
       </el-select>
       <el-select clearable class="filter-item" style="width: 130px" v-model="listQuery.type"
                  :placeholder="$t('table.type')">
-        <el-option v-for="item in  moduleTypeOptions" :key="item.key" :label="item.display_name"
+        <el-option v-for="item in  moduleTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'"
                    :value="item.key">
         </el-option>
       </el-select>
@@ -42,7 +42,7 @@
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" align="center" :label="$t('createTime')" sortable>
+      <el-table-column width="150px" align="center" :label="$t('createTime')" sortable>
         <template slot-scope="scope">
           <span>{{scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
         </template>
@@ -63,13 +63,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="300px" align="center" :label="$t('url')" sortable>
-        <template slot-scope="scope">
-          <span>{{scope.row.url}}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="200px" align="center" :label="$t('description')">
+      <el-table-column min-width="110px" align="center" :label="$t('description')">
         <template slot-scope="scope">
           <span>{{scope.row.description}}</span>
         </template>
@@ -78,8 +72,7 @@
       <el-table-column align="center" :label="$t('actions')" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>
-          <el-button type="success" v-if="scope.row.publish == false" size="small" @click="handlePublish(scope.row)">{{$t('table.publish')}}</el-button>
-          <el-button type="info" v-if="scope.row.publish == true" size="small " @click="handlePublish(scope.row)">{{$t('table.unPublish')}}</el-button>
+          <el-button type="success" v-if="scope.row.publish == false" size="mini" @click="handlePublish(scope.row)">{{$t('table.publish')}}</el-button>
           <el-button type="danger"  size="mini" @click="handleDelete(scope.row,'deleted')">{{$t('table.delete')}}</el-button>
         </template>
       </el-table-column>
@@ -95,11 +88,6 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form :rules="rules" ref="dataForm" :model="moduleForm" label-position="left" label-width="100px"
                style='width: 400px; margin-left:50px;'>
-
-        <el-form-item :label="$t('id')" v-if="false">
-          <el-input v-model="moduleForm.id"></el-input>
-        </el-form-item>
-
         <el-form-item :label="$t('ip')" prop="ip">
           <el-input v-model="moduleForm.ip"></el-input>
         </el-form-item>
@@ -115,10 +103,6 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="$t('url')" prop="description">
-          <el-input v-model="moduleForm.url"></el-input>
-        </el-form-item>
-
         <el-form-item :label="$t('description')" prop="description">
           <el-input v-model="moduleForm.description"></el-input>
         </el-form-item>
@@ -129,29 +113,34 @@
         <el-button v-else type="primary" @click="updateData">{{$t('table.confirm')}}</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="Reading statistics" :visible.sync="dialogPvVisible">
+      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+        <el-table-column prop="key" label="Channel"></el-table-column>
+        <el-table-column prop="pv" label="Pv"></el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">{{$t('table.confirm')}}</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-  import tabPane from './components/tabPane'
+  import tabPane from '@/views/monitorsource/components/tabPane'
   import complexTable from '@/views/table/complexTable'
-  import { getSource, createSource, deleteSource, publishSource, updateSource } from '@/api/monitorsource'
+  import { fetchPv, updateArticle } from '@/api/article'
+  import { getSource, createSource, deleteSource } from '@/api/monitorsource'
   import { parseTime } from '@/utils'
   import waves from '@/directive/waves'
-  import router from '@/router'
-  // import { asyncRouterMap } from '@/router'
+  // import router from '@/router'
+  import { asyncRouterMap } from '@/router'
 
   const moduleTypeOptions = [
     { key: 'SBADMIN', display_name: 'SBADMIN' },
     { key: 'DRUID', display_name: 'DRUID' },
-    { key: 'EUREKA', display_name: 'EUREKA' },
-    { key: 'SWAGGER', display_name: 'SWAGGER' },
-    { key: 'DISCONF', display_name: 'DISCONF' },
-    { key: 'APOLLO', display_name: 'APOLLO' },
-    { key: 'SPLUNK', display_name: 'SPLUNK' },
-    { key: 'SQLPAD', display_name: 'SQLPAD' },
-    { key: 'ELK', display_name: 'ELK' },
-    { key: 'SLEUTH', display_name: 'SLEUTH' }
+    { key: 'EUREKA', display_name: 'EUREKA' }
   ]
   export default {
     name: 'tab',
@@ -172,15 +161,11 @@
         activeName: 'CN',
         createdTimes: 0,
         moduleForm: {
-          id: '',
           module: 'SBADMIN',
           ip: '',
           port: 8080,
-          description: '',
-          publish: false,
-          url: ''
+          description: ''
         },
-        temp: {},
         tableKey: 0,
         list: null,
         total: null,
@@ -207,10 +192,9 @@
         dialogPvVisible: false,
         pvData: [],
         rules: {
-          ip: [{ required: true, message: 'ip is required', trigger: 'change' }],
+          // ip: [{ required: true, message: 'ip is required', trigger: 'change' }],
           port: [{ required: true, message: 'port is required', trigger: 'change' }],
           module: [{ required: true, message: 'module is required', trigger: 'blur' }],
-          url: [{ required: true, message: 'url is required', trigger: 'blur' }],
           description: [{ required: true, message: 'description is required', trigger: 'blur' }]
         },
         downloadLoading: false
@@ -252,14 +236,11 @@
         row.status = status
       },
       resetModuleForm() {
-        this.moduleForm = {
-          id: '',
+        this.temp = {
           module: 'SBADMIN',
           ip: '',
           port: 8080,
-          description: '',
-          publish: false,
-          url: ''
+          description: ''
         }
       },
       handleCreate() {
@@ -276,7 +257,7 @@
             createSource(this.moduleForm).then((res) => {
               this.dialogFormVisible = false
               if (this.handlerRes(res)) {
-                this.list.unshift(res.data.data)
+                this.list.unshift(this.moduleForm)
               }
             })
           }
@@ -293,25 +274,23 @@
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            console.log(this.dialogStatus)
-            updateSource(this.moduleForm.id, this.moduleForm).then((res) => {
-              this.dialogFormVisible = false
-              if (this.handlerRes(res)) {
-                for (const v of this.list) {
-                  if (v.id === this.moduleForm.id) {
-                    const index = this.list.indexOf(v)
-                    this.list.splice(index, 1, this.moduleForm)
-                    break
-                  }
+            const tempData = Object.assign({}, this.temp)
+            tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+            updateArticle(tempData).then(() => {
+              for (const v of this.list) {
+                if (v.id === this.temp.id) {
+                  const index = this.list.indexOf(v)
+                  this.list.splice(index, 1, this.temp)
+                  break
                 }
-                this.$store.dispatch('GetUserInfo').then((res) => {
-                  const roles = res.data.data.roles
-                  const sources = res.data.data.sources
-                  this.$store.dispatch('GenerateRoutes', { roles, sources }).then(() => {
-                    router.addRoutes(this.$store.getters.addRouters)
-                  })
-                })
               }
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
             })
           }
         })
@@ -326,17 +305,40 @@
         })
       },
       handlePublish(row) {
-        publishSource(row.id).then(res => {
-          if (this.handlerRes(res)) {
-            row.publish = !row.publish
-            this.$store.dispatch('GetUserInfo').then((res) => {
-              const roles = res.data.data.roles
-              const sources = res.data.data.sources
-              this.$store.dispatch('GenerateRoutes', { roles, sources }).then(() => {
-                router.addRoutes(this.$store.getters.addRouters)
-              })
+        console.log(this.$store.getters.roles)
+        // console.log(this.$store.getters.permission_routers)
+        // const roles = this.$store.getters.roles
+        // const old = this.$store.getters.addRouters
+        // console.log(old)
+        console.log()
+        console.log()
+        console.log(asyncRouterMap)
+        asyncRouterMap.forEach(function(router, i) {
+          if (router.path === '/monitorsource') {
+            console.log(i)
+            console.log(router)
+            router.children.push({
+              path: 'https://www.baidu.com',
+              name: row.module,
+              meta: { title: row.module, icon: 'tab' },
+              children: [{
+                path: 'https://123',
+                name: row.module + '_' + row.ip,
+                meta: { title: row.module + '_' + row.ip, icon: 'tab' }
+              }]
             })
           }
+        })
+        console.log(asyncRouterMap)
+        console.log()
+        console.log()
+        const news = this.$store.getters.addRouters
+        console.log(news)
+      },
+      handleFetchPv(pv) {
+        fetchPv(pv).then(response => {
+          this.pvData = response.data.pvData
+          this.dialogPvVisible = true
         })
       },
       handleDownload() {
