@@ -151,6 +151,7 @@
     { key: 'SPLUNK', display_name: 'SPLUNK' },
     { key: 'SQLPAD', display_name: 'SQLPAD' },
     { key: 'ELK', display_name: 'ELK' },
+    { key: 'QUARTZ', display_name: 'QUARTZ' },
     { key: 'SLEUTH', display_name: 'SLEUTH' }
   ]
   export default {
